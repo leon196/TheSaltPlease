@@ -1,22 +1,27 @@
-function Character(x, y, rot, targetStart, targetEnd)
+function Character(x, y, pos, rot, targetStart, targetEnd)
 {
-	// Set Targets
-	var minX = windowWidth * targetStart;
-	var minY = windowHeight * targetStart;
-	var maxX = windowWidth * targetEnd;
-	var maxY = windowHeight * targetEnd;
 
 	// Movement & Orientations
 	this.targets = {start: {x: 0, y: 0}, end: {x: 0, y: 0}};
 	this.orientation = rot / 180 * pi;
 	this.horizontal = rot == 0 || rot == 180 ? true : false;
+	this.rot = rot;
+	this.posGrid = pos;
+	this.targetStart = targetStart;
+	this.targetEnd = targetEnd;
 
 	// Animation
 	this.pirouette = rot == 0 || rot == 270 ? pi : -pi;
 	this.pirouetteDuration = 0.5;
 
+	// Set Targets	
+	var minX = area.x + area.cellSize * this.targetStart -area.cellSize/2;
+	var minY = area.y + area.cellSize * this.targetStart -area.cellSize/2;
+	var maxX = area.x + area.cellSize * this.targetEnd -area.cellSize/2;
+	var maxY = area.y + area.cellSize * this.targetEnd -area.cellSize/2;
+	
 	// Horizontal Issues
-	if (rot == 0 || rot == 180)
+	if (this.rot == 0 || this.rot == 180)
 	{
 		// Set Min & Max on X axis
 		this.targets.start.x = minX;
@@ -25,7 +30,7 @@ function Character(x, y, rot, targetStart, targetEnd)
 		this.targets.start.y = this.targets.end.y = y;
 	} 
 	// Vertical Issues
-	else if (rot == 90 || rot == 270)
+	else if (this.rot == 90 || this.rot == 270)
 	{			
 		// Set Min & Max on Y axis
 		this.targets.start.y = minY;
@@ -35,12 +40,18 @@ function Character(x, y, rot, targetStart, targetEnd)
 	}
 
 	// Head
-	this.head = new Head(x, y, rot);
+	this.head = new Head(x, y, pos, rot);
 
 	// Arms
-	this.arm = new Arm(x, y, rot, this.targets, false, 0);
-	this.armRight = new Arm(x, y, rot, this.targets, true, this.head.spriteHead.height);
+	this.arm = new Arm(x, y, pos, rot, this.targets, false, 0);
+	this.armRight = new Arm(x, y, pos, rot, this.targets, true, this.head.spriteHead.height);
 	this.armRight.synchronize(this.arm.indexHand, this.arm.indexArm);
+
+	// Plate
+	this.spritePlate = new PIXI.Sprite(randomPlate());
+	this.spritePlate.anchor.x = this.spritePlate.anchor.y = 0.5;
+	this.spritePlate.x = this.spritePlate.width/4;
+	this.armRight.spriteHand.addChild(this.spritePlate);
 
 	// Bull
 	this.bull = new Bull(x, y, rot, this.head.spriteHead.height);
@@ -51,13 +62,18 @@ function Character(x, y, rot, targetStart, targetEnd)
 	this.objectCaught = undefined;
 	this.objectCaughtOffset = { x: 0, y: 0};
 	this.positionUsingCondiment = { 
-		x: (rot == 0 || rot == 180 ? this.head.spritePlate.x : x),
-		y: (rot == 0 || rot == 180 ? y : this.head.spritePlate.y) };
+		x: (rot == 0 || rot == 180 ? this.spritePlate.x : x),
+		y: (rot == 0 || rot == 180 ? y : this.spritePlate.y) };
 
 	this.Update = function(ratio)
 	{
+		// Ratios
 		var x = this.targets.start.x * (1.0 - ratio.x) + this.targets.end.x * ratio.x;
 		var y = this.targets.start.y * (1.0 - ratio.y) + this.targets.end.y * ratio.y;
+		// Positions on grid
+		//x = Math.max(area.x, Math.min(x, area.x + area.w));
+		//y = Math.max(area.y, Math.min(y, area.y + area.h));
+
 		this.arm.Move(x, y);
 
 		// Move Object
@@ -185,6 +201,34 @@ function Character(x, y, rot, targetStart, targetEnd)
 		}
 	}
 
+	this.CalculateTargets = function()
+	{
+		// Set Targets
+		var minX = area.x + area.cellSize * this.targetStart -area.cellSize/2;
+		var minY = area.y + area.cellSize * this.targetStart -area.cellSize/2;
+		var maxX = area.x + area.cellSize * this.targetEnd -area.cellSize/2;
+		var maxY = area.y + area.cellSize * this.targetEnd -area.cellSize/2;
+		
+		// Horizontal Issues
+		if (this.rot == 0 || this.rot == 180)
+		{
+			// Set Min & Max on X axis
+			this.targets.start.x = minX;
+			this.targets.end.x = maxX;
+			// Lock on Y axis
+			this.targets.start.y = this.targets.end.y = positionArea(0, this.posGrid).y;
+		} 
+		// Vertical Issues
+		else if (this.rot == 90 || this.rot == 270)
+		{			
+			// Set Min & Max on Y axis
+			this.targets.start.y = minY;
+			this.targets.end.y = maxY;
+			// Lock on X axis
+			this.targets.start.x = this.targets.end.x = positionArea(this.posGrid, 0).x;
+		}
+	}
+
 	this.StartWant = function(condimentID)
 	{
 		this.bull.Setup(condimentID);
@@ -223,5 +267,17 @@ function Character(x, y, rot, targetStart, targetEnd)
 		var y = this.targets.start.y * (1.0 - mouseRatio.y) + this.targets.end.y * mouseRatio.y;
 		y = this.arm.positionOutOfScreen.y * (1 - ratio) + y * ratio;
 		this.arm.Move(x, y);
+	}
+
+	this.resize = function()
+	{
+
+		this.CalculateTargets();
+		this.arm.targets = this.targets;
+
+		this.head.resize();
+		this.arm.resize();
+		this.armRight.resize();
+		this.spritePlate.scale.x = this.spritePlate.scale.y = globalScale;
 	}
 }

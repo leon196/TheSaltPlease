@@ -3,32 +3,26 @@ var onButton2 = false;
 
 function onMouseMove(e)
 {
-	mouse.x = e.pageX - renderer.view.getBoundingClientRect().left;
-	mouse.y = e.pageY - renderer.view.getBoundingClientRect().top;
+	mouse.x = e.pageX;
+	mouse.y = e.pageY;
 
-	mouse.x = Math.max(0, Math.min(mouse.x, defaultSize * globalScale));
-	mouse.y = Math.max(0, Math.min(mouse.y, defaultSize * globalScale));
-
-	mouseRatio.x = mouse.x / windowWidth;
-	mouseRatio.y = mouse.y / windowHeight;
+    mouseRatio.x = Math.max(0, Math.min(1, (mouse.x - area.x)/area.w));
+    mouseRatio.y = Math.max(0, Math.min(1, (mouse.y - area.y)/area.w));
 
     if (!playing && onMenu) {
+
         if (PointCollisionTest(mouse.x, mouse.y, button1.getBounds())) {
-            button1.scale.x = globalScale * 0.7;
-            button1.scale.y = globalScale * 0.55;
+            button1.scale.x = 1.1;
+            button1.scale.y = 0.9;
             onButton1 = true;
-        } else if (button1.scale.x > globalScale * 0.6) {
-            button1.scale.x = globalScale * 0.6;
-            button1.scale.y = globalScale * 0.6;
+        } else {
             onButton1 = false;
         }
         if (PointCollisionTest(mouse.x, mouse.y, button2.getBounds())) {
-            button2.scale.x = globalScale * 0.55;
-            button2.scale.y = globalScale * 0.7;
+            button2.scale.x = 0.9;
+            button2.scale.y = 1.1;
             onButton2 = true;
-        } else if (button2.scale.y > globalScale * 0.6) {
-            button2.scale.x = globalScale * 0.6;
-            button2.scale.y = globalScale * 0.6;
+        } else if (onButton2) {
             onButton2 = false;
         }
     }

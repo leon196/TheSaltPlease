@@ -322,11 +322,11 @@
 },
 "head6":
 {
-	"frame": {"x":813,"y":17,"w":166,"h":210},
+	"frame": {"x":832,"y":34,"w":141,"h":193},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":166,"h":210},
-	"sourceSize": {"w":166,"h":210}
+	"spriteSourceSize": {"x":0,"y":0,"w":141,"h":193},
+	"sourceSize": {"w":141,"h":193}
 },
 "head7":
 {

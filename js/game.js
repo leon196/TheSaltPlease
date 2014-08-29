@@ -5,16 +5,15 @@ var assetsToLoad = [ "img/background.png", "img/spriteSheet.json" ];
 var textureArms, textureHandOpens, textureHandCatchs, textureHeads, textureStuffs, texturePlates, textureCondiments, textureBull;
 
 // Const
-var defaultSize = 722;
+var defaultSize = 1024;
 var minDistToCollide = 40;
-var dimension = 10;
+var dimensionDefault = 8;
 
 // Setup PIXI
 var stage = new PIXI.Stage(0xeddfb4);
-var minSize = Math.min(window.innerWidth, window.innerHeight);
-var globalScale = minSize / defaultSize;
-var windowWidth = minSize;
-var windowHeight = minSize;
+var minSize, globalScale, windowWidth, windowHeight, areaSize;
+var area = { x:0, y:0, w:0, h:0, dimension:8 };
+resizeArea();
 var renderer = PIXI.autoDetectRenderer(windowWidth, windowHeight);
 
 // Setup game
@@ -28,6 +27,9 @@ var currentWanting;
 var mouse = { x: 0, y: 0 };
 var mouseRatio = { x: 0, y: 0 };
 var mouseDown = false;
+
+// Skin Colors
+var skinColors = [0x847c64, 0xb8ad8a, 0xd7cca9, 0xe1d5b1];
 
 //
 var game = document.getElementById("game");
@@ -53,6 +55,8 @@ stage.addChild(layerBulls);
 stage.addChild(layerUI);
 
 // Timing
+var timeElapsed = 0;
+var timeStarted = new Date();
 var timeTaking = 1;
 var timeReturning = 1;
 var timeAppear = 2;
@@ -68,9 +72,36 @@ var wanter = undefined;
 var background;
 var title, click1, click2, nextLevel, showBottom, showTop, keys, info1, info2, button1, button2, bravo;
 
+// Grid
+var grid = new PIXI.Graphics();
+stage.addChild(grid);
+drawGrid();
+
 // Hard Coded Level Design
 currentLevel = 0;
 var levels = [{
+	areaSize:8,
+	arms:[
+		// g
+		{ 	pos:3, rot:90, start: 1, end:4 },
+		// y
+		{ 	pos:6, rot:270, start: 1, end:8 },
+		// b
+		{ 	pos:3, rot:180, start: 1, end:6 },
+		// y
+		{	pos:5, rot:0, start: 3, end:8 }
+	], 
+	condiments:[
+		{ x: 6, y: 3 }
+	],
+	wantings:[
+		{ wanterID: 2, condimentID: 0 },
+		{ wanterID: 0, condimentID: 0 },
+		{ wanterID: 1, condimentID: 0 },
+		{ wanterID: 2, condimentID: 0 },
+		{ wanterID: 3, condimentID: 0 }
+	]
+},{
 	arms:[
 		// g
 		{ 	x:3/10, y:0, rot:90, start: 0, end:1 },
@@ -244,12 +275,12 @@ function onAssetsLoaded()
 	// Background
 	background = new PIXI.Sprite(PIXI.Texture.fromImage("img/background.png"));
 	background.anchor.x = background.anchor.y = 0.5;
-	background.scale.x = background.scale.y = globalScale * 0.38;
-	background.x = windowWidth / 2;
-	background.y = windowHeight / 2;
+	resize(background);
 	stage.addChildAt(background, 0);
 
 	// UI
+	resize(layerUI);
+	//
 	title = new PIXI.Sprite(PIXI.Texture.fromFrame("title"));
 	nextLevel = new PIXI.Sprite(PIXI.Texture.fromFrame("nextLevel"));
 	showBottom = new PIXI.Sprite(PIXI.Texture.fromFrame("showBottom"));
@@ -267,69 +298,35 @@ function onAssetsLoaded()
 	layerUI.addChild(bravo);
 	bravo.anchor.x = 0.5
 	bravo.anchor.y = 0.5;
-	bravo.scale.x = bravo.scale.y = globalScale;
-	bravo.x = windowWidth / 2;
-	bravo.y = windowHeight / 2;
 	// Title
 	layerUI.addChild(title);
-	title.anchor.x = 0.5
-	title.anchor.y = 1;
-	title.scale.x = title.scale.y = globalScale;
-	title.x = windowWidth / 2;
-	title.y = windowHeight / 2;
+	title.anchor.x = title.anchor.y = 0.5;
+	title.y = -minSize/6;
+	// info 1
+	layerUI.addChild(info1);
+	info1.anchor.x = info1.anchor.y = 0.5;
+	// info 2
+	layerUI.addChild(info2);
+	info2.anchor.x = info2.anchor.y = 0.5;
+	info2.y = info1.height;
 	// Keys
 	layerUI.addChild(keys);
-	keys.anchor.x = 0.5;
-	keys.anchor.y = 0;
-	keys.scale.x = keys.scale.y = globalScale * 0.5;
-	keys.x = windowWidth / 2;
-	keys.y = windowHeight * 3.3 / 5;
-	// infos
-	layerUI.addChild(info1);
-	info1.anchor.x = 0.5
-	info1.anchor.y = 1;
-	info1.scale.x = info1.scale.y = globalScale * 0.5;
-	info1.x = windowWidth / 2;
-	info1.y = windowHeight * 3.3 / 5 - keys.height;
-	layerUI.addChild(info2);
-	info2.anchor.x = 0.5
-	info2.anchor.y = 1;
-	info2.scale.x = info2.scale.y = globalScale * 0.5;
-	info2.x = windowWidth / 2;
-	info2.y = windowHeight * 3.3 / 5;
+	keys.anchor.x = keys.anchor.y = 0.5;
+	keys.y = info1.height + info2.height;
 	// Buttons
 	layerUI.addChild(button1);
 	button1.interactive = true;
-	button1.anchor.x = 0.5;
-	button1.anchor.y = 1;
-	button1.scale.x = button1.scale.y = globalScale * 0.6;
-	button1.x = windowWidth * 2 / 7;
-	button1.y = windowHeight * 7 / 8;
+	button1.buttonMode = true;
+	button1.anchor.x = button1.anchor.y = 0.5;
+	button1.x = -button1.height;
+	button1.y = info1.height + info2.height + keys.height + button1.height/2;
 	// Buttons
 	layerUI.addChild(button2);
 	button2.interactive = true;
-	button2.anchor.x = 0.5;
-	button2.anchor.y = 1;
-	button2.scale.x = button2.scale.y = globalScale * 0.6;
-	button2.x = windowWidth * 5 / 7;
-	button2.y = windowHeight * 7 / 8;
-	// Clicks
-	layerUI.addChild(click2);
-	click2.interactive = true;
-	click2.anchor.x = 0;
-	click2.anchor.y = 0;
-	click2.scale.x = -globalScale * 0.6;
-	click2.scale.y = globalScale * 0.6;
-	click2.x = windowWidth / 2;
-	click2.y = windowHeight * 6 / 8;
-	// Clicks
-	layerUI.addChild(click1);
-	click1.interactive = true;
-	click1.anchor.x = 0;
-	click1.anchor.y = 0;
-	click1.scale.x = click1.scale.y = globalScale * 0.6;
-	click1.x = windowWidth / 2 - click1.width * 1 / 4;
-	click1.y = windowHeight * 6 / 8;
+	button2.buttonMode = true;
+	button2.anchor.x = button2.anchor.y = 0.5;
+	button2.x = button2.height;
+	button2.y = button1.y;
 
 	// Mouse Events
 	game.addEventListener('mousemove', onMouseMove);
@@ -339,6 +336,9 @@ function onAssetsLoaded()
 	// Keyboard Event
 	window.addEventListener('keydown', onKeyDown, true);
 	window.addEventListener('keyup', onKeyUp, true);
+
+	// Resize Event
+	window.addEventListener("resize", onResize);
 
 	// Start Game Loop
 	requestAnimFrame( animate );
@@ -479,6 +479,7 @@ function NextGame()
     Tweener.addTween({}, {time: timeAppear, onComplete:onComplete});
 }
 
+
 function ResetGame()
 {
     playing = false;
@@ -506,6 +507,8 @@ function ResetCurrentLevel()
 // Game Loop
 function animate() {
 
+	timeElapsed = new Date() - timeStarted;
+
     requestAnimFrame( animate );
 
     if (playing)
@@ -530,6 +533,15 @@ function animate() {
 	    		wanter.Want(ratio * (1 + Math.cos(wantElapsed * 10) * 0.1));
 			}
 	    }
+	} else {
+		if (!onButton1) {
+            button1.scale.x = 1 + Math.floor(1+Math.cos(timeElapsed/100))/10;
+            button1.scale.y = 1 - Math.floor(1+Math.cos(timeElapsed/100))/10;
+		}
+		if (!onButton2) {
+            button2.scale.x = 1 - Math.floor(1+Math.cos(timeElapsed/100))/10;
+            button2.scale.y = 1 + Math.floor(1+Math.cos(timeElapsed/100))/10;
+		}
 	}
 
     // render the stage  

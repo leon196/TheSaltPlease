@@ -2,6 +2,67 @@
 var pi = 3.1415926535897932384626433832795;
 var pi2 = 6.283185307179586476925286766559;
 
+function positionArea(row, col)
+{
+	return { x:area.x + row * area.cellSize - area.cellSize/2, y:area.y + col * area.cellSize - area.cellSize/2 };
+}
+
+function drawGrid()
+{
+	var count = area.dimension * area.dimension;
+	grid.clear();
+	grid.lineStyle(2, 0xcccccc);
+	for (var l = 0; l < count; l++) {
+		var pos = positionArea(l%area.dimension, Math.floor(l/area.dimension));
+		grid.drawRect( pos.x + area.cellSize/2, pos.y + area.cellSize/2, area.cellSize, area.cellSize);
+	}
+}
+
+function resizeArea()
+{
+	//
+	minSize = Math.min(window.innerWidth, window.innerHeight);
+	globalScale = minSize / defaultSize;
+	windowWidth = window.innerWidth;
+	windowHeight = window.innerHeight;
+	areaSize = minSize * 0.8;
+	area.x = windowWidth/2 - areaSize/2;
+	area.y = windowHeight/2 - areaSize/2;
+	area.cellSize = areaSize/area.dimension;
+	area.w = areaSize;
+	area.h = areaSize;
+
+	resize(background);
+	resize(layerUI);
+
+	if (characters != undefined) {
+		for (var c = 0; c < characters.length; c++) {
+			var character = characters[c];
+			character.resize();
+		}
+	}
+}
+
+function resize(stuff)
+{
+	if (stuff != undefined) {
+		stuff.scale.x = stuff.scale.y = globalScale;
+		stuff.x = windowWidth/2;
+		stuff.y = windowHeight/2;
+	}
+}
+
+//
+function onResize()
+{
+	//
+	resizeArea();
+	//
+	drawGrid();
+	//
+	renderer.resize(windowWidth, windowHeight);
+}
+
 // Simple Collision Test
 function DistanceTest(bounds1, bounds2)
 {
@@ -57,6 +118,10 @@ function randomPlate() {
 	return texturePlates[Math.floor(Math.random() * texturePlates.length)];
 }
 
+function randomSkinColor() {
+	return Math.random() * 0x0000cc;//skinColors[Math.floor(Math.random() * skinColors.length)];
+}
+
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex ;
 
@@ -76,8 +141,13 @@ function shuffle(array) {
   return array;
 }
 
-function SprayRandomStuff(min, max, randomStuffCount)
+function SprayRandomStuff(randomStuffCount)
 {
+	var countCases = area.dimension * area.dimension;
+	randomStuffCount = Math.min(randomStuffCount, countCases)
+	var rndPos = [];
+	for (var s = 0; s < countCases; s++) { rndPos.push(s); }
+	shuffle(rndPos);
 	// Random Stuff
 	for (var s = 0; s < randomStuffCount; s++) {
 		var sprite = new PIXI.Sprite(randomStuff());
@@ -88,8 +158,9 @@ function SprayRandomStuff(min, max, randomStuffCount)
 		// sprite.x = Math.random() * 
 		// sprite.x = (s % dimension)/(dimension*2) * windowWidth + windowWidth/2 - windowWidth * 1/(dimension*2);
 		// sprite.y = (Math.floor(s/dimension))/(dimension*2) * windowHeight + windowHeight/2 - windowHeight * 1/(dimension*2);
-		sprite.x = Math.floor((min + Math.random() * (max - min)) * dimension) / dimension * windowWidth;
-		sprite.y = Math.floor((min + Math.random() * (max - min)) * dimension) / dimension * windowHeight;
+		var pos = positionArea(rndPos[s]%area.dimension, Math.floor(rndPos[s]/area.dimension));
+		sprite.x = pos.x + area.cellSize;
+		sprite.y = pos.y + area.cellSize;
 		//sprite.rotation = Math.random() * pi2;
 		layerStuffs.addChild(sprite);
 		stuffs.push({ caught: false, type: -1, sprite: sprite });

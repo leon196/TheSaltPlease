@@ -23,29 +23,26 @@ function SetupLevel(level)
 	var condimentCount = level.condiments.length;
 	var randomStuffCount = Math.floor(2 + Math.random() * 6);
 
-	var dimension = 8;
-	var min = 1/dimension;
+	var min = 1/area.dimension;
 	var max = 1 - min;
 	var arms = level.arms;
 
 	for (var c = 0; c < arms.length; c++) {
 		var armLevel = arms[c];
 		var rot = armLevel.rot;
-		var pos = {x: armLevel.x * windowWidth, y: armLevel.y * windowHeight};
-		var start = armLevel.start;
-		var end = armLevel.end;
+		var pos = armLevel.pos;
 
-		var arm = { x: pos.x, y: pos.y, rot: rot, start: start, end: end};
+		var arm = { x: 0, y: 0, pos: pos, rot: rot, start: armLevel.start, end: armLevel.end};
 
 		if (rot == 90 || rot == 270) {
-			arm.x = pos.x;
+			arm.x = positionArea(pos, 0).x;
 			if (rot == 90) {
 				arm.y = 0;
 			} else {
 				arm.y = windowHeight;
 			}
 		} else {
-			arm.y = pos.y;
+			arm.y = positionArea(0, pos).y;
 			if (rot == 0) {
 				arm.x = 0;
 			} else {
@@ -53,7 +50,7 @@ function SetupLevel(level)
 			}
 		}
 		levelDesign.push(arm);
-		characters.push(new Character(arm.x, arm.y, arm.rot, arm.start, arm.end));
+		characters.push(new Character(arm.x, arm.y, arm.pos, arm.rot, arm.start, arm.end));
 	}
 
 	// Condiments
@@ -61,20 +58,19 @@ function SetupLevel(level)
 	{
 		var condimentsInfos = level.condiments[c];
 		var sprite = new PIXI.Sprite(textureCondiments[c]);
-		sprite.scale.x = sprite.scale.y = globalScale * 0.8;
 		sprite.anchor.x = sprite.anchor.y = 0.5;
 		sprite.alpha = 0;
 		layerCondiments.addChild(sprite);
 
-		sprite.x = condimentsInfos.x * windowWidth;
-		sprite.y = condimentsInfos.y * windowHeight;
+		sprite.x = area.x + condimentsInfos.x * area.cellSize - area.cellSize/2;
+		sprite.y = area.y + condimentsInfos.y * area.cellSize - area.cellSize/2;
 
 		var condiment = { caught: false, type: c, sprite: sprite };
 		condiments.push(condiment);
 	}
 
 	// Random Stuff
-	SprayRandomStuff(0.2, 0.8, Math.floor(4 + Math.random() * 8));
+	SprayRandomStuff(Math.floor(4 + Math.random() * 8));
 
 	// Setup Random Wanters
 	SetupWanting(level);
@@ -163,7 +159,7 @@ function SetupRandomLevel()
 		condiments.push(condiment);
 	}
 
-	SprayRandomStuff(0.2, 0.8, Math.floor(4 + Math.random() * 8));
+	SprayRandomStuff(Math.floor(4 + Math.random() * 8));
 
 	// Setup Random Wanters
 	SetupRandomWanting();
