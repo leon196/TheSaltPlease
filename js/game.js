@@ -75,24 +75,23 @@ var title, click1, click2, nextLevel, showBottom, showTop, keys, info1, info2, b
 // Grid
 var grid = new PIXI.Graphics();
 stage.addChild(grid);
-drawGrid();
 
 // Hard Coded Level Design
 currentLevel = 0;
 var levels = [{
-	areaSize:8,
+	dimension:4,
 	arms:[
 		// g
-		{ 	pos:3, rot:90, start: 1, end:4 },
+		{ 	pos:1, rot:90, start: 1, end:4 },
 		// y
-		{ 	pos:6, rot:270, start: 1, end:8 },
+		{ 	pos:2, rot:270, start: 1, end:4 },
 		// b
-		{ 	pos:3, rot:180, start: 1, end:6 },
+		{ 	pos:1, rot:180, start: 2, end:4 },
 		// y
-		{	pos:5, rot:0, start: 3, end:8 }
+		{	pos:2, rot:0, start: 1, end:3 }
 	], 
 	condiments:[
-		{ x: 6, y: 3 }
+		{ x: 1, y: 2 }
 	],
 	wantings:[
 		{ wanterID: 2, condimentID: 0 },
@@ -252,6 +251,10 @@ var levels = [{
 		{ wanterID: 4, condimentID: 2 }
 	]
 }];
+
+resizeArea();
+
+drawGrid();
 
 function onAssetsLoaded()
 {

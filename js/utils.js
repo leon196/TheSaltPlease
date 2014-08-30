@@ -28,6 +28,7 @@ function resizeArea()
 	areaSize = minSize * 0.8;
 	area.x = windowWidth/2 - areaSize/2;
 	area.y = windowHeight/2 - areaSize/2;
+	area.dimension = levels != undefined ? levels[currentLevel].dimension : dimensionDefault;
 	area.cellSize = areaSize/area.dimension;
 	area.w = areaSize;
 	area.h = areaSize;
