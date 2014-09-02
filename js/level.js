@@ -58,6 +58,7 @@ function SetupLevel(level)
 	{
 		var condimentsInfos = level.condiments[c];
 		var sprite = new PIXI.Sprite(textureCondiments[c]);
+		sprite.scale.x = sprite.scale.y = globalScale;
 		sprite.anchor.x = sprite.anchor.y = 0.5;
 		sprite.alpha = 0;
 		layerCondiments.addChild(sprite);
@@ -142,7 +143,7 @@ function SetupRandomLevel()
 	{
 		var arm = levelDesign[Math.floor(Math.random() * characterCount)];
 		var sprite = new PIXI.Sprite(textureCondiments[c]);
-		sprite.scale.x = sprite.scale.y = globalScale * 0.8;
+		sprite.scale.x = sprite.scale.y = globalScale;
 		sprite.anchor.x = sprite.anchor.y = 0.5;
 		sprite.alpha = 0;
 		layerCondiments.addChild(sprite);

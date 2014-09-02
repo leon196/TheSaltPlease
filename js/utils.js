@@ -35,6 +35,7 @@ function resizeArea()
 
 	resize(background);
 	resize(layerUI);
+	//resize(layerCondiments)
 
 	if (characters != undefined) {
 		for (var c = 0; c < characters.length; c++) {

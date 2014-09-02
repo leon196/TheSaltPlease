@@ -44,14 +44,14 @@ function Character(x, y, pos, rot, targetStart, targetEnd)
 
 	// Arms
 	this.arm = new Arm(x, y, pos, rot, this.targets, false, 0);
-	this.armRight = new Arm(x, y, pos, rot, this.targets, true, this.head.spriteHead.height);
-	this.armRight.synchronize(this.arm.indexHand, this.arm.indexArm);
+	// this.armRight = new Arm(x, y, pos, rot, this.targets, true, this.head.spriteHead.height);
+	// this.armRight.synchronize(this.arm.indexHand, this.arm.indexArm);
 
 	// Plate
 	this.spritePlate = new PIXI.Sprite(randomPlate());
 	this.spritePlate.anchor.x = this.spritePlate.anchor.y = 0.5;
 	this.spritePlate.x = this.spritePlate.width/4;
-	this.armRight.spriteHand.addChild(this.spritePlate);
+	// this.armRight.spriteHand.addChild(this.spritePlate);
 
 	// Bull
 	this.bull = new Bull(x, y, rot, this.head.spriteHead.height);
@@ -249,14 +249,14 @@ function Character(x, y, pos, rot, targetStart, targetEnd)
 	this.Appear = function()
 	{
 		this.arm.Appear();
-		this.armRight.Appear();
+		// this.armRight.Appear();
 		this.head.Appear();
 	}
 
 	this.Disappear = function()
 	{
 		this.arm.Disappear();
-		this.armRight.Disappear();
+		// this.armRight.Disappear();
 		this.head.Disappear();
 	}
 
@@ -277,7 +277,7 @@ function Character(x, y, pos, rot, targetStart, targetEnd)
 
 		this.head.resize();
 		this.arm.resize();
-		this.armRight.resize();
+		// this.armRight.resize();
 		this.spritePlate.scale.x = this.spritePlate.scale.y = globalScale;
 	}
 }

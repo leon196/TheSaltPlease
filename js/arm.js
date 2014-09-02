@@ -6,9 +6,11 @@ function Arm(x, y, pos, rot, targets, inversed, offset)
 	this.rot = rot;
 	this.posGrid = pos;
 	this.inversed = inversed;
+	this.position = { x:x, y:y };
+	this.offset = offset; 
 
 	// Sprites
-	this.spriteArm = new PIXI.Sprite(textureArms[this.indexArm]);
+	this.spriteArm = new PIXI.TilingSprite(textureArms[this.indexArm], 4096, 72);
 	this.spriteHand = new PIXI.Sprite(textureHandOpens[this.indexHand]);
 	layerArms.addChild(this.spriteHand);
 	layerArms.addChild(this.spriteArm);
@@ -123,46 +125,9 @@ function Arm(x, y, pos, rot, targets, inversed, offset)
 		this.spriteArm.scale.x = this.spriteArm.scale.y = globalScale;
 
 		if (this.rot == 90 || this.rot == 270) {
-			this.spriteHand.x = this.spriteArm.x = positionArea(this.posGrid, 0).x;
-			if (this.rot == 90) {
-				this.spriteHand.y = this.spriteArm.y = 0;
-			} else {
-				this.spriteHand.y = this.spriteArm.y = windowHeight;
-			}
+			this.spriteArm.width = windowHeight / globalScale;
 		} else {
-			this.spriteHand.y = this.spriteArm.y = positionArea(0, this.posGrid).y;
-			if (this.rot == 0) {
-				this.spriteHand.x = this.spriteArm.x = 0;
-			} else {
-				this.spriteHand.x = this.spriteArm.x = windowWidth;
-			}
-		}
-
-		switch (this.rot) 
-		{
-			case 0:
-				this.positionInitial.x = this.spriteArm.x = this.spriteHand.x = x + this.spriteHand.width * 0.5;
-				this.positionOutOfScreen.y = this.positionInitial.y = this.spriteArm.y = this.spriteHand.y = y + offset;
-				this.positionOutOfScreen.x = - this.spriteHand.width;
-			break;
-
-			case 180:
-				this.positionInitial.x = this.spriteArm.x = this.spriteHand.x = x - this.spriteHand.width * 0.5;
-				this.positionOutOfScreen.y = this.positionInitial.y = this.spriteArm.y = this.spriteHand.y = y - offset;
-				this.positionOutOfScreen.x = windowWidth + this.spriteHand.width;
-			break;
-
-			case 90:
-				this.positionOutOfScreen.x = this.positionInitial.x = this.spriteArm.x = this.spriteHand.x = x - offset;
-				this.positionInitial.y = this.spriteArm.y = this.spriteHand.y = y + this.spriteHand.width * 0.5;
-				this.positionOutOfScreen.y = - this.spriteHand.width;
-			break;
-
-			case 270:
-				this.positionOutOfScreen.x = this.positionInitial.x = this.spriteArm.x = this.spriteHand.x = x + offset;
-				this.positionInitial.y = this.spriteArm.y = this.spriteHand.y = y - this.spriteHand.width * 0.5;
-				this.positionOutOfScreen.y = windowHeight + this.spriteHand.width;
-			break;
+			this.spriteArm.width = windowWidth / globalScale;
 		}
 	}
 }
