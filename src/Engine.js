@@ -9,8 +9,6 @@ var Engine = function()
     {
         // Pixi
         this.renderer = PIXI.autoDetectRenderer(Screen.size.width, Screen.size.height);
-        this.canvas = document.getElementById("canvas");
-        this.canvas.appendChild(this.renderer.view);
 
         // Main Scene
         this.scene = new Scene();
@@ -30,6 +28,8 @@ var Engine = function()
         Asset.LoadAndSetup(function()
         {
             self.scene.Setup();
+            self.canvas = document.getElementById("canvas");
+            self.canvas.appendChild(self.renderer.view);
         });
     };
 

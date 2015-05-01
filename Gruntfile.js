@@ -5,6 +5,7 @@ module.exports = function(grunt) {
       dev: {
         options: {
           base: '.'
+          , keepalive: true
         }
       }
     }

@@ -52,11 +52,11 @@ var Scene = function()
     {
         if (this.ready)
         {
-            for (var h = this.handList.length - 1; h >= 0; --h)
+            for (var h = 0; h < this.handList.length; ++h)
             {
                 var hand = this.handList[h];
-                var x = clamp(Input.mouse.x, hand.start * Screen.tableSize, hand.end * Screen.tableSize);
-                var y = clamp(Input.mouse.y, hand.start * Screen.tableSize, hand.end * Screen.tableSize);
+                var x = mix(hand.start * Screen.tableSize, hand.end * Screen.tableSize, clamp((Input.mouseTable.x + Screen.tableSize) / (Screen.tableSize * 2), 0, 1));
+                var y = mix(hand.start * Screen.tableSize, hand.end * Screen.tableSize, clamp((Input.mouseTable.y + Screen.tableSize) / (Screen.tableSize * 2), 0, 1));
                 
                 // Animating
                 hand.Update(x, y, Input.mousePressed);
@@ -71,6 +71,7 @@ var Scene = function()
                         {
                             if (hand.Catch(stuff))
                             {
+                                this.setChildIndex(stuff, this.getChildIndex(hand) - 1);
                                 break;
                             }
                         }
@@ -80,7 +81,7 @@ var Scene = function()
                 // Droping
                 if (!Input.mousePressed && hand.HasStuff())
                 {
-                    this.addChild(hand.stuff);
+                    this.setChildIndex(hand.stuff, this.getChildIndex(this.handList[0]) - 1);
                     hand.Drop();
                 }
             }
@@ -93,19 +94,19 @@ var Scene = function()
 
     this.touchmove = this.mousemove = function(mouseData)
     {
-        Input.mouse = mouseData.data.getLocalPosition(this);
+        Input.mouseTable = mouseData.data.getLocalPosition(this);
     };
 
     this.tap = this.touchstart = this.mousedown = function(mouseData)
     {
-        Input.mouse = mouseData.data.getLocalPosition(this);
+        Input.mouseTable = mouseData.data.getLocalPosition(this);
         Input.mousePressed = true;
         Input.mouseClic = true;
     };
 
     this.touchend = this.touchendoutside = this.mouseupoutside = this.mouseout = this.mouseup = function(mouseData)
     {
-        Input.mouse = mouseData.data.getLocalPosition(this);
+        Input.mouseTable = mouseData.data.getLocalPosition(this);
         Input.mousePressed = false;
     };
 
@@ -126,12 +127,11 @@ var Scene = function()
 
             Screen.tableSize = Screen.tableMarginRatio * tableSizeMax / 2;
 
-            /*
-            this.debugGrid.clear();
-            this.debugGrid.beginFill(0x00ff00);
-            this.debugGrid.drawRect( -Screen.tableSize, -Screen.tableSize, Screen.tableSize * 2, Screen.tableSize * 2 );
-            this.debugGrid.endFill();
-            */
+            // this.debugGrid.clear();
+            // this.debugGrid.beginFill(0x00ff00);
+            // this.debugGrid.drawRect( -Screen.tableSize, -Screen.tableSize, Screen.tableSize / 2, Screen.tableSize * 2 );
+            // this.debugGrid.drawRect( -Screen.tableSize + Screen.tableSize, -Screen.tableSize, Screen.tableSize / 2, Screen.tableSize * 2 );
+            // this.debugGrid.endFill();
         }
     }
 };

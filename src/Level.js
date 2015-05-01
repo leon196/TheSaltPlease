@@ -6,7 +6,9 @@ Level.list =
 	{ grid : size(4, 4)
 	, hands : [
 		{ position: 1, direction: Direction.Left, start: -1, end: 1 }
-		, { position: 3, direction: Direction.Up, start: -1, end: 1 }
+		, { position: 2, direction: Direction.Up, start: -1, end: 1 }
+		, { position: 4, direction: Direction.Down, start: -0.5, end: 0.5 }
+		, { position: 4, direction: Direction.Right, start: -0.75, end: 0.25 }
 	] }
 	// 2
 	, { grid : size(8, 8)
@@ -20,16 +22,21 @@ Level.GetHandListForLevel = function (levelNumber)
 {
 	var hands = [];
     var level = Level.list[levelNumber];
+    var grid = level.grid;
+    var gridDimension = grid.width * grid.height;
+    var gridCellSize = size(Screen.tableSize / grid.width, Screen.tableSize / grid.height);
     for (var h = level.hands.length - 1; h >= 0; --h)
     {
         var handInfo = level.hands[h];
         var position = vec2(0,0);
-        if (Direction.IsHorizontal(handInfo.direction)) {
-            position.y = (handInfo.position / level.grid.width) * Screen.tableSize - Screen.tableSize / 2;
-        } else {
-            position.x = (handInfo.position / level.grid.height) * Screen.tableSize - Screen.tableSize / 2;
-        }
-
+    	if ( Direction.IsHorizontal(handInfo.direction) )
+    	{
+			position.y = handInfo.position * gridCellSize.height * 2 - Screen.tableSize - gridCellSize.height;
+		}
+		else
+		{
+			position.x = handInfo.position * gridCellSize.width * 2 - Screen.tableSize - gridCellSize.width;
+		}
         hands.push(new Hand( handInfo.direction, position, handInfo.start, handInfo.end ));
     }
     return hands;
