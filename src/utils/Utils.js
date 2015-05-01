@@ -1,6 +1,69 @@
-// Utils
-var pi = 3.1415926535897932384626433832795;
-var pi2 = 6.283185307179586476925286766559;
+// http://www.html5canvastutorials.com/advanced/html5-canvas-animation-stage/
+window.requestAnimFrame = (function(callback) { 
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) { window.setTimeout(callback, 1000 / 60);};})();
+
+function random(range)
+{
+	return Math.floor( Math.random() * range );
+}
+
+function randomUniqueList(range)
+{
+	list = [];
+	for (var r = 0; r < range; ++r)
+	{
+		list.push(r);
+	}
+	return shuffle(list);
+}
+
+// From internet, dont remember where
+function shuffle(array) 
+{
+  var currentIndex = array.length, temporaryValue, randomIndex ;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+/*
+function BoundsCollisionTest(bounds1, bounds2)
+{
+	if (PointCollisionTest(bounds1.x, bounds1.y, bounds2)) { return true; }
+	if (PointCollisionTest(bounds1.x, bounds1.y + bounds1.height, bounds2)) { return true; }
+	if (PointCollisionTest(bounds1.x + bounds1.width, bounds1.y, bounds2)) { return true; }
+	if (PointCollisionTest(bounds1.x + bounds1.width, bounds1.y + bounds1.height, bounds2)) { return true; }
+	if (PointCollisionTest(bounds2.x, bounds2.y, bounds1)) { return true; }
+	if (PointCollisionTest(bounds2.x, bounds2.y + bounds2.height, bounds1)) { return true; }
+	if (PointCollisionTest(bounds2.x + bounds2.width, bounds2.y, bounds1)) { return true; }
+	if (PointCollisionTest(bounds2.x + bounds2.width, bounds2.y + bounds2.height, bounds1)) { return true; }
+	return false;
+}
+
+function PointCollisionTest(x, y, bounds) {
+	if (x >= bounds.x) {
+		if (x <= (bounds.x + bounds.width)) {
+			if (y >= bounds.y) {
+				if (y <= (bounds.y + bounds.height)) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
 
 function positionArea(row, col)
 {
@@ -72,33 +135,6 @@ function DistanceTest(bounds1, bounds2)
 	// return dist < Math.max(bounds1.width, Math.max(bounds1.height, Math.max(bounds2.width, bounds2.height)));
 	return dist < bounds1.width * 0.5 || dist < bounds1.height * 0.5 || dist < bounds2.width * 0.5 || dist < bounds2.height * 0.5;
 }
-
-function BoundsCollisionTest(bounds1, bounds2)
-{
-	if (PointCollisionTest(bounds1.x, bounds1.y, bounds2)) { return true; }
-	if (PointCollisionTest(bounds1.x, bounds1.y + bounds1.height, bounds2)) { return true; }
-	if (PointCollisionTest(bounds1.x + bounds1.width, bounds1.y, bounds2)) { return true; }
-	if (PointCollisionTest(bounds1.x + bounds1.width, bounds1.y + bounds1.height, bounds2)) { return true; }
-	if (PointCollisionTest(bounds2.x, bounds2.y, bounds1)) { return true; }
-	if (PointCollisionTest(bounds2.x, bounds2.y + bounds2.height, bounds1)) { return true; }
-	if (PointCollisionTest(bounds2.x + bounds2.width, bounds2.y, bounds1)) { return true; }
-	if (PointCollisionTest(bounds2.x + bounds2.width, bounds2.y + bounds2.height, bounds1)) { return true; }
-	return false;
-}
-
-function PointCollisionTest(x, y, bounds) {
-	if (x >= bounds.x) {
-		if (x <= (bounds.x + bounds.width)) {
-			if (y >= bounds.y) {
-				if (y <= (bounds.y + bounds.height)) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 function distance(x1, y1, x2, y2) {
 	return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
@@ -122,25 +158,6 @@ function randomPlate() {
 
 function randomSkinColor() {
 	return Math.random() * 0x0000cc;//skinColors[Math.floor(Math.random() * skinColors.length)];
-}
-
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex ;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
 }
 
 function SprayRandomStuff(randomStuffCount)
@@ -168,6 +185,7 @@ function SprayRandomStuff(randomStuffCount)
 		stuffs.push({ caught: false, type: -1, sprite: sprite });
 	}
 }
+*/
 
 /*
 levels =  [

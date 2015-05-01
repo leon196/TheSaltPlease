@@ -98,51 +98,51 @@
 },
 "arm1":
 {
-	"frame": {"x":47,"y":935,"w":1000,"h":81},
+	"frame": {"x":47,"y":935,"w":1274,"h":81},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":81},
-	"sourceSize": {"w":1000,"h":81}
+	"spriteSourceSize": {"x":0,"y":0,"w":1274,"h":81},
+	"sourceSize": {"w":1274,"h":81}
 },
 "arm2":
 {
-	"frame": {"x":47,"y":1019,"w":1000,"h":81},
+	"frame": {"x":47,"y":1019,"w":1274,"h":81},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":81},
-	"sourceSize": {"w":1000,"h":81}
+	"spriteSourceSize": {"x":0,"y":0,"w":1274,"h":81},
+	"sourceSize": {"w":1274,"h":81}
 },
 "arm3":
 {
-	"frame": {"x":47,"y":1096,"w":1000,"h":90},
+	"frame": {"x":47,"y":1096,"w":1274,"h":90},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":81},
-	"sourceSize": {"w":1000,"h":81}
+	"spriteSourceSize": {"x":0,"y":0,"w":1274,"h":81},
+	"sourceSize": {"w":1274,"h":81}
 },
 "arm4":
 {
-	"frame": {"x":47,"y":1188,"w":1000,"h":71},
+	"frame": {"x":47,"y":1188,"w":1274,"h":71},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":81},
-	"sourceSize": {"w":1000,"h":81}
+	"spriteSourceSize": {"x":0,"y":0,"w":1274,"h":81},
+	"sourceSize": {"w":1274,"h":81}
 },
 "arm5":
 {
-	"frame": {"x":47,"y":1256,"w":1000,"h":71},
+	"frame": {"x":47,"y":1256,"w":1274,"h":71},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":81},
-	"sourceSize": {"w":1000,"h":81}
+	"spriteSourceSize": {"x":0,"y":0,"w":1274,"h":81},
+	"sourceSize": {"w":1274,"h":81}
 },
 "arm6":
 {
-	"frame": {"x":47,"y":1327,"w":1000,"h":71},
+	"frame": {"x":47,"y":1327,"w":1274,"h":71},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":1000,"h":81},
-	"sourceSize": {"w":1000,"h":81}
+	"spriteSourceSize": {"x":0,"y":0,"w":1274,"h":81},
+	"sourceSize": {"w":1274,"h":81}
 },
 "handOpen1":
 {
@@ -339,7 +339,7 @@
 },
 "meta": {
 	"version": "1.0",
-	"image": "assets.png",
+	"image": "sprites.png",
 	"format": "RGBA8888",
 	"size": {"w":2048,"h":1440},
 	"scale": "1"

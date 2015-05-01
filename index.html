@@ -3,80 +3,24 @@
 <head>
     <meta charset="utf-8" />
     <title>The Salt Please</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-            font-family: 'claire_hand';
-            font-size: 20px;
-            color: #ffffff;
-        }
-        canvas {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            margin: 0 auto;
-        }
-        #game {
-            display: block;
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: #333333;
-        }
-        #preinfo {
-            display: block;
-            position: absolute;
-            top: 0;
-            background: #000000;
-            text-align: center;
-            height: 30px;
-            line-height: 30px;
-            width: 100%;
-        }
-        #postinfo {
-            display: block;
-            position: absolute;
-            bottom: 0;
-            background: #000000;
-            text-align: center;
-            height: 30px;
-            line-height: 30px;
-            width: 100%;
-        }
-        @font-face {
-            font-family: 'claire_hand';
-            src: url('font/clairehandbold-webfont.eot');
-            src: url('font/clairehandbold-webfont.eot?#iefix') format('embedded-opentype'),
-                 url('font/clairehandbold-webfont.woff') format('woff'),
-                 url('font/clairehandbold-webfont.ttf') format('truetype'),
-                 url('font/clairehandbold-webfont.svg#claire_handbold') format('svg');
-            font-weight: normal;
-            font-style: normal;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css" />
 </head>
     <body>
-        <div id="game"></div>
-        <!--<div id="preinfo">Move the mouse to reach the condiment. Click the mouse to catch the condiment.</div>
-        <div id="postinfo">Made by Leon for Ludum Dare 30.</div>-->
-        <script src="js/lib/jquery-2.1.1.min.js"></script>
-        <script src="js/lib/pixi.dev.js"></script>
-        <script src="js/lib/tweener.js"></script>
-        <script src="js/utils.js"></script>
-        <script src="js/input.js"></script>
-        <script src="js/level.js"></script>
-        <script src="js/arm.js"></script>
-        <script src="js/head.js"></script>
-        <script src="js/bull.js"></script>
-        <script src="js/character.js"></script>
-        <script src="js/game.js"></script>
-        <script src="js/animation.js"></script>
-        <img src="">
+        <div id="canvas"></div>
+        <script src="src/lib/pixi.js"></script>
+        <script src="src/utils/Math.js"></script>
+        <script src="src/utils/Color.js"></script>
+        <script src="src/utils/Utils.js"></script>
+        <script src="src/elements/Background.js"></script>
+        <script src="src/elements/Direction.js"></script>
+        <script src="src/elements/Scene.js"></script>
+        <script src="src/elements/Stuff.js"></script>
+        <script src="src/elements/Hand.js"></script>
+        <script src="src/Engine.js"></script>
+        <script src="src/Screen.js"></script>
+        <script src="src/Input.js"></script>
+        <script src="src/Level.js"></script>
+        <script src="src/Asset.js"></script>
+        <script src="src/Main.js"></script>
     </body>
 </html>
