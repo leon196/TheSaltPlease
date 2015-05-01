@@ -1,5 +1,4 @@
 // Assets
-// var assetsToLoad = [ "img/bull.png", "img/plate1.png", "img/plate2.png", "img/plate3.png", "img/stuff1.png", "img/stuff2.png", "img/salt.png", "img/pepper.png", "img/moutarde.png", "img/arm1.png", "img/arm2.png", "img/arm3.png", "img/arm4.png", "img/handCatch1.png", "img/handOpen1.png", "img/handCatch2.png", "img/handOpen2.png", "img/head1.png", "img/head2.png", "img/head3.png", "img/head4.png" ];
 var assetsToLoad = [ "img/background.png", "img/spriteSheet.json" ];
 
 var textureArms, textureHandOpens, textureHandCatchs, textureHeads, textureStuffs, texturePlates, textureCondiments, textureBull;
