@@ -97,14 +97,28 @@ var Scene = function()
         Input.mouseTable = mouseData.data.getLocalPosition(this);
     };
 
-    this.tap = this.touchstart = this.mousedown = function(mouseData)
+    this.mousedown = function(mouseData)
     {
         Input.mouseTable = mouseData.data.getLocalPosition(this);
         Input.mousePressed = true;
         Input.mouseClic = true;
     };
 
-    this.touchend = this.touchendoutside = this.mouseupoutside = this.mouseout = this.mouseup = function(mouseData)
+    this.tap = function(mouseData)
+    {
+        Input.mouseTable = mouseData.data.getLocalPosition(this);
+        if (Input.mousePressed)
+        {
+            Input.mousePressed = false;
+        }
+        else
+        {
+            Input.mousePressed = true;
+        }
+        Input.mouseClic = true;
+    };
+
+    this.mouseupoutside = this.mouseout = this.mouseup = function(mouseData)
     {
         Input.mouseTable = mouseData.data.getLocalPosition(this);
         Input.mousePressed = false;
