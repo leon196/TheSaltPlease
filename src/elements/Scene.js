@@ -2,14 +2,10 @@ var Scene = function()
 {
     // GUI
     PIXI.Container.call(this);
+    this.interactive = true;
     this.background;
     this.tableSprite;
     // this.debugGrid;
-    
-    // Input
-    this.interactive = true;
-    this.mouse = vec2(0,0);
-    this.mousePressed = false;
 
     // Logic
     this.ready = false;
@@ -34,6 +30,7 @@ var Scene = function()
         // this.debugGrid = new PIXI.Graphics();
         // this.addChild(this.debugGrid);
 
+        this.ready = true;
         this.Resize();
 
         // Stuffs
@@ -49,8 +46,6 @@ var Scene = function()
             var hand = this.handList[h];
             this.addChild( hand );
         }
-
-        this.ready = true;
     };
 
     this.Update = function ()
@@ -60,53 +55,84 @@ var Scene = function()
             for (var h = this.handList.length - 1; h >= 0; --h)
             {
                 var hand = this.handList[h];
-                var x = clamp(this.mouse.x, hand.start * Screen.tableSize, hand.end * Screen.tableSize);
-                var y = clamp(this.mouse.y, hand.start * Screen.tableSize, hand.end * Screen.tableSize);
-                hand.Update(x, y, this.mousePressed);
+                var x = clamp(Input.mouse.x, hand.start * Screen.tableSize, hand.end * Screen.tableSize);
+                var y = clamp(Input.mouse.y, hand.start * Screen.tableSize, hand.end * Screen.tableSize);
+                
+                // Animating
+                hand.Update(x, y, Input.mousePressed);
+
+                // Catching
+                if (Input.mouseClic && hand.CanCatch())
+                {
+                    for (var s = this.stuffList.length - 1; s >= 0; --s)
+                    {
+                        var stuff = this.stuffList[s];
+                        if (stuff.canBeCaught)
+                        {
+                            if (hand.Catch(stuff))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Droping
+                if (!Input.mousePressed && hand.HasStuff())
+                {
+                    this.addChild(hand.stuff);
+                    hand.Drop();
+                }
             }
         }
+
+        Input.mouseClic = false;
     };
 
     // Input Events
 
     this.touchmove = this.mousemove = function(mouseData)
     {
-        this.mouse = mouseData.data.getLocalPosition(this);
+        Input.mouse = mouseData.data.getLocalPosition(this);
     };
 
     this.tap = this.touchstart = this.mousedown = function(mouseData)
     {
-        this.mouse = mouseData.data.getLocalPosition(this);
-        this.mousePressed = true;
+        Input.mouse = mouseData.data.getLocalPosition(this);
+        Input.mousePressed = true;
+        Input.mouseClic = true;
     };
 
     this.touchend = this.touchendoutside = this.mouseupoutside = this.mouseout = this.mouseup = function(mouseData)
     {
-        this.mouse = mouseData.data.getLocalPosition(this);
-        this.mousePressed = false;
+        Input.mouse = mouseData.data.getLocalPosition(this);
+        Input.mousePressed = false;
     };
 
     // Resize Event
 
     this.Resize = function ()
     {
-        var screenSizeMin = Math.min(Screen.size.width, Screen.size.height);
-        var tableSizeMax = Math.max(this.tableSprite.width, this.tableSprite.height);
-        var scale = screenSizeMin / tableSizeMax;
+        if (this.ready)
+        {
+            var screenSizeMin = Math.min(Screen.size.width, Screen.size.height);
+            var tableSizeMax = Math.max(this.tableSprite.width, this.tableSprite.height);
+            var scale = screenSizeMin / tableSizeMax;
 
-        this.scale.x = this.scale.y = scale;
+            this.scale.x = this.scale.y = scale;
 
-        this.x = Screen.size.width / 2;
-        this.y = Screen.size.height / 2;
+            this.x = Screen.size.width / 2;
+            this.y = Screen.size.height / 2;
 
-        Screen.tableSize = Screen.tableMarginRatio * tableSizeMax / 2;
+            Screen.tableSize = Screen.tableMarginRatio * tableSizeMax / 2;
 
-        /*
-        this.debugGrid.clear();
-        this.debugGrid.beginFill(0x00ff00);
-        this.debugGrid.drawRect( -Screen.tableSize, -Screen.tableSize, Screen.tableSize * 2, Screen.tableSize * 2 );
-        this.debugGrid.endFill();
-        */
+            /*
+            this.debugGrid.clear();
+            this.debugGrid.beginFill(0x00ff00);
+            this.debugGrid.drawRect( -Screen.tableSize, -Screen.tableSize, Screen.tableSize * 2, Screen.tableSize * 2 );
+            this.debugGrid.endFill();
+            */
+        }
     }
 };
 
