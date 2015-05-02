@@ -4,11 +4,11 @@ Asset.Background = "img/background.jpg"
 Asset.Table = "img/table.png";
 
 Asset.HandOpen = "handOpen";
-Asset.HandClose = "handCatch";
+Asset.HandClose = "handClose";
 Asset.Arm = "arm";
 Asset.Stuff = "plate1"
 
-Asset.HandCount = 21;
+Asset.HandCount = 13;
 Asset.StuffCount = 1;
 Asset.HandRandomUniques = randomUniqueList(Asset.HandCount);
 
@@ -19,7 +19,7 @@ Asset.RandomHand = function ()
 	{
 		Asset.HandRandomUniques = randomUniqueList(Asset.HandCount);
 	}
-	return Math.floor(Math.random() * Asset.HandCount) + 1;
+	return r + 1;
 };
 
 Asset.LoadAndSetup = function (onComplete)
@@ -29,6 +29,7 @@ Asset.LoadAndSetup = function (onComplete)
     .add(Asset.Table)
     .add("img/sprites.png", "img/sprites.json")
     .add("img/arms.png", "img/arms.json")
+    .add("img/hands.png", "img/hands.json")
     .once('complete', onComplete)
     .load();
 };

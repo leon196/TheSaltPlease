@@ -8,7 +8,9 @@ var Scene = function()
     // this.debugGrid;
 
     // Logic
-    this.ready = false;
+    this.isReady = false;
+    this.isAppearing = false;
+    this.isDisappearing = false;
     this.currentLevel = 0;
 
     // Elements
@@ -30,13 +32,19 @@ var Scene = function()
         // this.debugGrid = new PIXI.Graphics();
         // this.addChild(this.debugGrid);
 
-        this.ready = true;
+        this.isReady = true;
         this.Resize();
+        this.LoadLevel();
+        this.Show();
+    };
 
+    this.LoadLevel = function ()
+    {
         // Stuffs
         this.stuffList = Level.GetStuffListForLevel(this.currentLevel);
         for (var s = 0; s < this.stuffList.length; ++s) {
             var stuff = this.stuffList[s];
+            stuff.zIndex = this.children.length;
             this.addChild( stuff );
         }
 
@@ -48,15 +56,54 @@ var Scene = function()
         }
     };
 
+    this.Show = function ()
+    {
+        Time.appearingStarted = Time.GetElapsed();
+        this.isAppearing = true;
+    };
+
     this.Update = function ()
     {
-        if (this.ready)
+        if (this.isReady)
         {
+            var hand, stuff, ratio, x, y, outOfScreenPosition;
             for (var h = 0; h < this.handList.length; ++h)
             {
-                var hand = this.handList[h];
-                var x = mix(hand.start * Screen.tableSize, hand.end * Screen.tableSize, clamp((Input.mouseTable.x + Screen.tableSize) / (Screen.tableSize * 2), 0, 1));
-                var y = mix(hand.start * Screen.tableSize, hand.end * Screen.tableSize, clamp((Input.mouseTable.y + Screen.tableSize) / (Screen.tableSize * 2), 0, 1));
+                hand = this.handList[h];
+                x = mix(hand.start * Screen.tableSize, hand.end * Screen.tableSize, clamp((Input.mouseTable.x + Screen.tableSize) / (Screen.tableSize * 2), 0, 1));
+                y = mix(hand.start * Screen.tableSize, hand.end * Screen.tableSize, clamp((Input.mouseTable.y + Screen.tableSize) / (Screen.tableSize * 2), 0, 1));
+
+                if (this.isAppearing)
+                {
+                    ratio = animationRatio(Time.appearingStarted, Time.appearingDelay, Time.GetElapsed());
+                    outOfScreenPosition = Direction.GetOutOfScreenPosition(hand.direction);
+                    x = mix(outOfScreenPosition, x, ratio);
+                    y = mix(outOfScreenPosition, y, ratio);
+
+                    for (var s = this.stuffList.length - 1; s >= 0; --s)
+                    {
+                        stuff = this.stuffList[s];
+                        stuff.FallIn(smoothstep(0, 0.5 * stuff.zIndex / this.children.length, ratio));
+                    }
+
+                    if (ratio >= 1.0)
+                    {
+                        this.isAppearing = false;
+                    }
+                }
+                if (this.isDisappearing)
+                {
+                    ratio = animationRatio(Time.disappearingStarted, Time.disappearingDelay, Time.GetElapsed());
+                    outOfScreenPosition = Direction.GetOutOfScreenPosition(hand.direction);
+                    x = mix(x, outOfScreenPosition, ratio);
+                    y = mix(y, outOfScreenPosition, ratio);
+
+                    for (var s = this.stuffList.length - 1; s >= 0; --s)
+                    {
+                        stuff = this.stuffList[s];
+                        stuff.FallOut(ratio);
+                    }
+                }
                 
                 // Animating
                 hand.Update(x, y, Input.mousePressed);
@@ -66,7 +113,7 @@ var Scene = function()
                 {
                     for (var s = this.stuffList.length - 1; s >= 0; --s)
                     {
-                        var stuff = this.stuffList[s];
+                        stuff = this.stuffList[s];
                         if (stuff.canBeCaught)
                         {
                             if (hand.Catch(stuff))
@@ -124,11 +171,26 @@ var Scene = function()
         Input.mousePressed = false;
     };
 
-    // Resize Event
+    this.Restart = function ()
+    {
+        for (var h = 0; h < this.handList.length; ++h)
+        {
+            var hand = this.handList[h];
+            this.removeChild(hand);
+        }
+        this.handList = [];
+
+        for (var s = 0; s < this.stuffList.length; ++s)
+        {
+            var stuff = this.stuffList[s];
+            this.removeChild(stuff);
+        }
+        this.stuffList = [];
+    };
 
     this.Resize = function ()
     {
-        if (this.ready)
+        if (this.isReady)
         {
             var screenSizeMin = Math.min(Screen.size.width, Screen.size.height);
             var tableSizeMax = Math.max(this.tableSprite.width, this.tableSprite.height);

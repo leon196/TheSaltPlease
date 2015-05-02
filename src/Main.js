@@ -1,9 +1,9 @@
-var engine = new Engine();
-engine.Setup();
+
+Engine.Setup();
 requestAnimFrame( animate );
 
 function animate ()
 {
 	requestAnimFrame( animate );
-	engine.Update();
+	Engine.Update();
 }

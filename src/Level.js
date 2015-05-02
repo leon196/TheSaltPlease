@@ -5,16 +5,18 @@ Level.list =
 	// 1
 	{ grid : size(4, 4)
 	, hands : [
-		{ position: 1, direction: Direction.Left, start: -1, end: 1 }
-		, { position: 2, direction: Direction.Up, start: -1, end: 1 }
-		, { position: 4, direction: Direction.Down, start: -0.5, end: 0.5 }
-		, { position: 4, direction: Direction.Right, start: -0.75, end: 0.25 }
+		{ position: 1, direction: Direction.Left, start: 1, end: 4 }
+		, { position: 2, direction: Direction.Up, start: 1, end: 4 }
+		, { position: 4, direction: Direction.Down, start: 2, end: 4 }
+		, { position: 4, direction: Direction.Right, start: 1, end: 4 }
 	] }
 	// 2
 	, { grid : size(8, 8)
 	, hands : [
-		{ position: 5, direction: Direction.Right, start: -1, end: 1 }
-		, { position: 3, direction: Direction.Down, start: -1, end: 1 }
+		{ position: 5, direction: Direction.Right, start: 2, end: 6 }
+		, { position: 3, direction: Direction.Down, start: 4, end: 8 }
+		, { position: 2, direction: Direction.Down, start: 1, end: 8 }
+		, { position: 1, direction: Direction.Down, start: 7, end: 8 }
 	] }
 ];
 
@@ -29,15 +31,21 @@ Level.GetHandListForLevel = function (levelNumber)
     {
         var handInfo = level.hands[h];
         var position = vec2(0,0);
+		var start = 0;
+		var end = 0;
     	if ( Direction.IsHorizontal(handInfo.direction) )
     	{
 			position.y = handInfo.position * gridCellSize.height * 2 - Screen.tableSize - gridCellSize.height;
+			start = (handInfo.start - grid.width / 2) / (grid.width / 2) - 1 / grid.width;
+			end = (handInfo.end - grid.width / 2) / (grid.width / 2) - 1 / grid.width;
 		}
 		else
 		{
 			position.x = handInfo.position * gridCellSize.width * 2 - Screen.tableSize - gridCellSize.width;
+			start = (handInfo.start - grid.height / 2) / (grid.height / 2) - 1 / grid.height;
+			end = (handInfo.end - grid.height / 2) / (grid.height / 2) - 1 / grid.height;
 		}
-        hands.push(new Hand( handInfo.direction, position, handInfo.start, handInfo.end ));
+        hands.push(new Hand( handInfo.direction, position, start, end ));
     }
     return hands;
 };

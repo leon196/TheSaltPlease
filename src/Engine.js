@@ -1,42 +1,65 @@
 
-var Engine = function()
+var Engine = {};
+
+Engine.renderer;
+Engine.canvas;
+Engine.scene;
+Engine.isRestarting = false;
+
+Engine.Setup = function ()
 {
-    this.renderer;
-    this.canvas;
-    this.scene;
+    // Pixi
+    Engine.renderer = PIXI.autoDetectRenderer(Screen.size.width, Screen.size.height);
 
-    this.Setup = function ()
+    // Main Scene
+    Engine.scene = new Scene();
+
+    // Resize Event
+    window.addEventListener("resize", function ()
     {
-        // Pixi
-        this.renderer = PIXI.autoDetectRenderer(Screen.size.width, Screen.size.height);
+        Screen.size.width = window.innerWidth;
+        Screen.size.height = window.innerHeight;
+        Engine.scene.Resize();
+        Engine.renderer.resize(Screen.size.width, Screen.size.height);
+    });
 
-        // Main Scene
-        this.scene = new Scene();
-
-        // Resize Event
-        var self = this;
-        window.addEventListener("resize", function ()
-        {
-            Screen.size.width = window.innerWidth;
-            Screen.size.height = window.innerHeight;
-            self.scene.Resize();
-            self.renderer.resize(Screen.size.width, Screen.size.height);
-        });
-
-        // Load Asset
-        var self = this;
-        Asset.LoadAndSetup(function()
-        {
-            self.scene.Setup();
-            self.canvas = document.getElementById("canvas");
-            self.canvas.appendChild(self.renderer.view);
-        });
-    };
-
-    this.Update = function ()
+    // Load Asset
+    Asset.LoadAndSetup(function()
     {
-        this.scene.Update();
+        Engine.scene.Setup();
+        Engine.scene.Show();
 
-        this.renderer.render( this.scene );
-    };
+        Engine.canvas = document.getElementById("canvas");
+        Engine.canvas.appendChild(Engine.renderer.view);
+    });
 };
+
+Engine.Update = function ()
+{
+    if (Input.keyR && !Engine.isRestarting && !Engine.scene.isAppearing && !Engine.scene.isDisappearing)
+    {
+        Engine.isRestarting = true;
+
+        Time.disappearingStarted = Time.GetElapsed();
+        Engine.scene.isDisappearing = true;
+    }
+
+    if (Engine.isRestarting)
+    {
+        var ratioDisappearing = animationRatio(Time.disappearingStarted, Time.disappearingDelay, Time.GetElapsed());
+        if (ratioDisappearing >= 1.0)
+        {
+            Engine.isRestarting = false;
+            //Engine.scene.currentLevel++;
+            Engine.scene.Restart();
+            Engine.scene.LoadLevel();
+            Engine.scene.Show();
+            Engine.scene.isDisappearing = false;
+        }
+    }
+
+    Engine.scene.Update();
+
+    Engine.renderer.render( Engine.scene );
+};
+
