@@ -9,6 +9,40 @@ Input.mousePressed = false;
 // Triggered once
 Input.mouseClic = false;
 
+// Input Events
+
+Input.MouseMove = function(mouseData)
+{
+    Input.mouseTable = mouseData.data.getLocalPosition(Engine.scene);
+};
+
+Input.MouseDown = function(mouseData)
+{
+    Input.mouseTable = mouseData.data.getLocalPosition(Engine.scene);
+    Input.mousePressed = true;
+    Input.mouseClic = true;
+};
+
+Input.Tap = function(mouseData)
+{
+    Input.mouseTable = mouseData.data.getLocalPosition(Engine.scene);
+    if (Input.mousePressed)
+    {
+        Input.mousePressed = false;
+    }
+    else
+    {
+        Input.mousePressed = true;
+    }
+    Input.mouseClic = true;
+};
+
+Input.MouseUp = function(mouseData)
+{
+    Input.mouseTable = mouseData.data.getLocalPosition(Engine.scene);
+    Input.mousePressed = false;
+};
+
 // Keys
 Input.keyR = false;
 

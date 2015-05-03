@@ -12,10 +12,14 @@ var Scene = function()
     this.isAppearing = false;
     this.isDisappearing = false;
     this.currentLevel = 0;
-
+    this.currentWant = 0;
+    
     // Elements
     this.handList;
     this.stuffList;
+    this.condimentList;
+    this.wantList;
+    this.bullList;
 
     this.Setup = function ()
     {
@@ -27,6 +31,9 @@ var Scene = function()
         this.tableSprite = new PIXI.Sprite(PIXI.Texture.fromImage(Asset.Table));
         this.tableSprite.anchor.x = this.tableSprite.anchor.y = 0.5;
         this.addChild(this.tableSprite);
+
+        // Bulls
+        this.bullList = [];
 
         // Debug Grid
         // this.debugGrid = new PIXI.Graphics();
@@ -48,12 +55,41 @@ var Scene = function()
             this.addChild( stuff );
         }
 
+        // Condiments
+        this.condimentList = Level.GetCondimentListForLevel(this.currentLevel);
+        for (var c = 0; c < this.condimentList.length; ++c) {
+            var condiment = this.condimentList[c];
+            condiment.zIndex = this.children.length;
+            this.addChild( condiment );
+        }
+
         // Hands
         this.handList = Level.GetHandListForLevel(this.currentLevel);
         for (var h = 0; h < this.handList.length; ++h) {
             var hand = this.handList[h];
             this.addChild( hand );
         }
+
+        // Wants
+        this.wantList = Level.GetWantListForLevel(this.currentLevel);
+        var wantInfo = this.wantList[this.currentWant];
+        var handWanting = this.handList[wantInfo.handIndex];
+        handWanting.Want(wantInfo.condiment, wantInfo.delay);
+
+        var position = vec2(0,0);
+        if (Direction.IsHorizontal(handWanting.direction))
+        {
+            position.x = Direction.GetBorderPosition(handWanting.direction);
+            position.y = handWanting.y;
+        }
+        else
+        {
+            position.x = handWanting.x;
+            position.y = Direction.GetBorderPosition(handWanting.direction);
+        }
+        var bull = new Bull(position, wantInfo.condiment, wantInfo.delay);
+        this.addChild(bull);
+        this.bullList.push(bull);
     };
 
     this.Show = function ()
@@ -86,6 +122,12 @@ var Scene = function()
                         stuff.FallIn(smoothstep(0, 0.5 * stuff.zIndex / this.children.length, ratio));
                     }
 
+                    for (var c = this.condimentList.length - 1; c >= 0; --c)
+                    {
+                        condiment = this.condimentList[c];
+                        condiment.FallIn(smoothstep(0, 0.5 * condiment.zIndex / this.children.length, ratio));
+                    }
+
                     if (ratio >= 1.0)
                     {
                         this.isAppearing = false;
@@ -102,6 +144,12 @@ var Scene = function()
                     {
                         stuff = this.stuffList[s];
                         stuff.FallOut(ratio);
+                    }
+
+                    for (var c = this.condimentList.length - 1; c >= 0; --c)
+                    {
+                        condiment = this.condimentList[c];
+                        condiment.FallOut(ratio);
                     }
                 }
                 
@@ -135,40 +183,6 @@ var Scene = function()
         }
 
         Input.mouseClic = false;
-    };
-
-    // Input Events
-
-    this.touchmove = this.mousemove = function(mouseData)
-    {
-        Input.mouseTable = mouseData.data.getLocalPosition(this);
-    };
-
-    this.mousedown = function(mouseData)
-    {
-        Input.mouseTable = mouseData.data.getLocalPosition(this);
-        Input.mousePressed = true;
-        Input.mouseClic = true;
-    };
-
-    this.tap = function(mouseData)
-    {
-        Input.mouseTable = mouseData.data.getLocalPosition(this);
-        if (Input.mousePressed)
-        {
-            Input.mousePressed = false;
-        }
-        else
-        {
-            Input.mousePressed = true;
-        }
-        Input.mouseClic = true;
-    };
-
-    this.mouseupoutside = this.mouseout = this.mouseup = function(mouseData)
-    {
-        Input.mouseTable = mouseData.data.getLocalPosition(this);
-        Input.mousePressed = false;
     };
 
     this.Restart = function ()

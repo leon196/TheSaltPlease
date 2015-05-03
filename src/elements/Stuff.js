@@ -1,8 +1,8 @@
 
-var Stuff = function(position) 
+var Stuff = function(texture, position) 
 {
     // GUI
-    PIXI.Sprite.call(this, PIXI.Texture.fromFrame(Asset.Stuff));
+    PIXI.Sprite.call(this, texture);
 	this.anchor.x = this.anchor.y = 0.5;
     this.x = position.x;
     this.y = position.y;
@@ -15,6 +15,7 @@ var Stuff = function(position)
 
     // Logic
     this.canBeCaught = true;
+    this.isCondiment = false;
 
     this.FallIn = function (ratio)
 	{

@@ -14,6 +14,12 @@ Engine.Setup = function ()
     // Main Scene
     Engine.scene = new Scene();
 
+    // Mouse Events
+    Engine.scene.touchmove = Engine.scene.mousemove = Input.MouseMove;
+    Engine.scene.mousedown = Input.MouseDown;
+    Engine.scene.tap = Input.Tap;
+    Engine.scene.mouseupoutside = Engine.scene.mouseout = Engine.scene.mouseup = Input.MouseUp;
+
     // Resize Event
     window.addEventListener("resize", function ()
     {

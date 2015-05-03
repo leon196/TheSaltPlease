@@ -56,3 +56,17 @@ Direction.GetOutOfScreenPosition = function (direction)
 	}
 	return position;
 };
+
+Direction.GetBorderPosition = function (direction)
+{
+	var position = 0;
+	switch (direction)
+	{
+		case Direction.Left: position = Screen.size.width / 2; break;
+		case Direction.Right: position = -Screen.size.width / 2; break;
+		case Direction.Up: position = Screen.size.height / 2; break;
+		case Direction.Down: position = -Screen.size.height / 2; break;
+		default: break;
+	}
+	return position;
+};

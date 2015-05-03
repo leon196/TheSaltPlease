@@ -63,6 +63,11 @@ var Hand = function(direction, position, start, end)
         this.stuff = null;
     };
 
+    this.Want = function (condimentType, delay)
+    {
+        //this.
+    };
+
     this.Update = function (x, y, mousePressed)
     {
         if (Direction.IsHorizontal(this.direction))
